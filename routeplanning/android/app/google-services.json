@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1064102700688",
+    "project_id": "rota-planlama",
+    "storage_bucket": "rota-planlama.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064102700688:android:1cfa2ecfd8ff073e8eda15",
+        "android_client_info": {
+          "package_name": "com.example.routeplanning"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1064102700688-fdr69u7v3cpsk44ekol1rvbi8l1aoob0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSYGZJpYNyUSRQdnPNpI3bkMx8gcf8DM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064102700688-fdr69u7v3cpsk44ekol1rvbi8l1aoob0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
