@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:routeplanning/pages/UserPage.dart';
 import 'package:routeplanning/pages/LoginPage.dart';
 import 'package:routeplanning/pages/AdminPage.dart';
+import 'package:routeplanning/pages/MapPage.dart';
 import 'input_theme.dart';
 
 void main() => runApp(const MyApp());
@@ -22,11 +23,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         inputDecorationTheme: InputTheme().theme(),
       ),
-      initialRoute: "/userpage",
+      initialRoute: "/map",
       routes: {
         "/login": (context) => const LoginPage(),
         "/userpage": (context) => const UserPage(),
         "/adminpage": (context) => const AdminPage(),
+        "/map": (context) => const MapPage(),
       },
     );
   }

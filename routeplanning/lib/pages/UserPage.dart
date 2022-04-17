@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:routeplanning/GradientButton.dart';
 import '../MainBackground.dart';
 
 class UserPage extends StatefulWidget {
@@ -60,7 +61,7 @@ class _UserPageState extends State<UserPage> {
                 ),
                 Text(
                   busStations[index],
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -72,7 +73,6 @@ class _UserPageState extends State<UserPage> {
         child: Padding(
           padding: const EdgeInsets.all(28.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 child: ListView.builder(
@@ -82,36 +82,14 @@ class _UserPageState extends State<UserPage> {
                 ),
               ),
               const SizedBox(height: 15),
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
-                padding: const EdgeInsets.all(0.0),
-                child: Ink(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: <Color>[
-                        Color(0xFF4527A0),
-                        Color(0xFF7E57C2),
-                        Color(0xFF2EE2B3),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                  ),
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Kaydet & Rotayı Görüntüle',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 24.0),
-                    ),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/userpage");
-                },
-              ),
+              const GradientButton(
+                text: "Kaydet ve Rotayı Göster",
+                color: <Color>[
+                  Color(0xFF4527A0),
+                  Color(0xFF7E57C2),
+                  Color(0xFF2EE2B3),
+                ],
+              )
             ],
           ),
         ),

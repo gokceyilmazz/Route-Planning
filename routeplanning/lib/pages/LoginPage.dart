@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:routeplanning/GradientButton.dart';
 import '../MainBackground.dart';
 
 class LoginPage extends StatefulWidget {
@@ -79,32 +80,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 50),
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80.0)),
-                    padding: const EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xFF062880),
-                            Color(0xFF03ACAD),
-                            Color(0xFF2EE2B3),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                      ),
-                      child: Container(
-                        constraints: const BoxConstraints(
-                            minWidth: 88.0, minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'Giriş Yap',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 24.0),
-                        ),
-                      ),
-                    ),
+                  GradientButton(
+                    text: "Giriş Yap",
+                    color: const <Color>[
+                      Color(0xFF062880),
+                      Color(0xFF03ACAD),
+                      Color(0xFF2EE2B3),
+                    ],
                     onPressed: () {
                       Navigator.pushNamed(context, "/userpage");
                     },
