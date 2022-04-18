@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:routeplanning/GradientButton.dart';
+import 'package:routeplanning/pages/UserPage.dart';
 import '../MainBackground.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+FirebaseFirestore fs = FirebaseFirestore.instance;
+CollectionReference usersRef = fs.collection('users');
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,7 +18,47 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
   bool _showPassword = true;
+
+  void login() async {
+    await usersRef
+        .where('username', isEqualTo: usernameController.text)
+        .where('password', isEqualTo: passwordController.text)
+        .get()
+        .then((value) {
+      if (value.size > 0) {
+        if (value.docs[0].get("isAdmin") == true) {
+          Navigator.pushNamed(context, '/adminpage');
+        } else {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return UserPage(
+                userid: value.docs[0].get("id"),
+              );
+            },
+          ));
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Hata'),
+            content: const Text('Lütfen bilgilerinizi kontrol ediniz.'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true)
+                      .pop(); // dismisses only the dialog and returns nothing
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    });
+  }
 
   _builtLoginPage() => SafeArea(
         child: Center(
@@ -56,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 15),
                   Container(
                     child: TextField(
+                      controller: passwordController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
@@ -87,9 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                       Color(0xFF03ACAD),
                       Color(0xFF2EE2B3),
                     ],
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/userpage");
-                    },
+                    onPressed: login,
                   ),
                 ],
               ),
@@ -100,6 +145,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    usernameController.text = "admin";
+    passwordController.text = "1234";
     return Scaffold(
       body: Center(
         child: Stack(

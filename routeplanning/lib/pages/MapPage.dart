@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:routeplanning/GradientButton.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import '../MainBackground.dart';
+import '../algorithm.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -26,12 +27,19 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _getPolyline() async {
+    await getData();
+    List paths = calculatePath();
+    _originLatitude = stations[paths[0][0]][2]; //lat
+    _originLongitude = stations[paths[0][0]][3]; //lat
+    _destLatitude = stations[paths[0][paths[0].length - 1]][2]; //lat
+    _destLongitude = stations[paths[0][paths[0].length - 1]][3]; //lat
     List<LatLng> polylineCoordinates = [];
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       "AIzaSyCfnzBDKkq8W2992BYLqSsl-nlx6159dpw",
       PointLatLng(_originLatitude, _originLongitude),
       PointLatLng(_destLatitude, _destLongitude),
+      wayPoints: [],
       travelMode: TravelMode.driving,
     );
     if (result.points.isNotEmpty) {
@@ -43,11 +51,11 @@ class _MapPageState extends State<MapPage> {
     }
     _addPolyLine(polylineCoordinates);
 
-    _originLatitude = 39.8244526;
-    _originLongitude = 29.9240807;
-    _destLatitude = 40.7881197;
-    _destLongitude = 29.9736694;
-    _getPolyline();
+    // _originLatitude = 39.8244526;
+    // _originLongitude = 29.9240807;
+    // _destLatitude = 40.7881197;
+    // _destLongitude = 29.9736694;
+    // _getPolyline();
   }
 
   _addPolyLine(List<LatLng> polylineCoordinates) {
@@ -115,6 +123,9 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (stations.isEmpty) {
+      getData();
+    }
     return Scaffold(
       body: Center(
         child: Stack(

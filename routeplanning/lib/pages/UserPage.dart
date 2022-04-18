@@ -1,31 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:routeplanning/GradientButton.dart';
 import '../MainBackground.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+FirebaseFirestore fs = FirebaseFirestore.instance;
+CollectionReference stationsRef = fs.collection('stations');
+CollectionReference users_stationsRef = fs.collection('users_stations');
 
 class UserPage extends StatefulWidget {
-  const UserPage({Key? key}) : super(key: key);
+  final int userid;
+
+  const UserPage({Key? key, this.userid = -1}) : super(key: key);
 
   @override
   State<UserPage> createState() => _UserPageState();
 }
 
 class _UserPageState extends State<UserPage> {
+  List busStations = [];
+  List stationIDs = [];
+
   String? dropdownValue;
   String _groupValue = "-1";
-  List busStations = [
-    "Basiskele",
-    "Cayirova",
-    "Darica",
-    "Derince",
-    "Dilovasi",
-    "Gebze",
-    "Golcuk",
-    "Kandira",
-    "Karamursel",
-    "Kartepe",
-    "Korfez",
-    "Izmit"
-  ];
+
+  void getData() async {
+    // Get docs from collection reference
+    var querySnapshot = await stationsRef.get();
+    for (var doc in querySnapshot.docs) {
+      busStations.add(doc.get("name"));
+      stationIDs.add(doc.get("id"));
+      setState(() {});
+    }
+  }
+
+  void saveStation() async {
+    int stationIndex = int.parse(_groupValue);
+    if (stationIndex == -1) {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Hata'),
+          content: const Text('Lütfen bir durak seçiniz.'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // dismisses only the dialog and returns nothing
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+    users_stationsRef
+        .where("users", isEqualTo: widget.userid)
+        .get()
+        .then((value) => print(value.size));
+  }
 
   void _handleRadioValueChange(String? value) {
     setState(() {
@@ -61,7 +93,8 @@ class _UserPageState extends State<UserPage> {
                 ),
                 Text(
                   busStations[index],
-                  style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 20.0, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -82,13 +115,14 @@ class _UserPageState extends State<UserPage> {
                 ),
               ),
               const SizedBox(height: 15),
-              const GradientButton(
+              GradientButton(
                 text: "Kaydet ve Rotayı Göster",
-                color: <Color>[
+                color: const <Color>[
                   Color(0xFF4527A0),
                   Color(0xFF7E57C2),
                   Color(0xFF2EE2B3),
                 ],
+                onPressed: saveStation,
               )
             ],
           ),
@@ -97,6 +131,10 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (busStations.isEmpty) {
+      getData();
+    }
+    // stationsRef.snapshots().
     return Scaffold(
       body: Center(
         child: Stack(

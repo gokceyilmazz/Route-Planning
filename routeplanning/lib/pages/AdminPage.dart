@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../MainBackground.dart';
 import '../GradientButton.dart';
+
+FirebaseFirestore fs = FirebaseFirestore.instance;
+CollectionReference stationsRef = fs.collection('stations');
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -11,33 +15,38 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   late TextEditingController stationNameController;
+  late TextEditingController passengerCountController;
 
   @override
   void initState() {
     super.initState();
     stationNameController = TextEditingController();
+    passengerCountController = TextEditingController();
   }
 
   @override
   void dispose() {
     stationNameController.dispose();
+    passengerCountController.dispose();
     super.dispose();
   }
 
-  List busStations = [
-    "Basiskele",
-    "Cayirova",
-    "Darica",
-    "Derince",
-    "Dilovasi",
-    "Gebze",
-    "Golcuk",
-    "Kandira",
-    "Karamursel",
-    "Kartepe",
-    "Korfez",
-    "Izmit"
-  ];
+  List busStations = [];
+
+  void getData() async {
+    // Get docs from collection reference
+    var querySnapshot = await stationsRef.get();
+    for (var doc in querySnapshot.docs) {
+      busStations.add([
+        doc.get("id"),
+        doc.get("name"),
+        doc.get("lat"),
+        doc.get("lng"),
+        doc.get("passengerCount")
+      ]);
+      setState(() {});
+    }
+  }
 
   _builtListItem(context, index) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -60,7 +69,7 @@ class _AdminPageState extends State<AdminPage> {
             child: Row(
               children: [
                 Text(
-                  busStations[index],
+                  busStations[index][1],
                   style: const TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.w600),
                 ),
@@ -72,13 +81,16 @@ class _AdminPageState extends State<AdminPage> {
                 ),
                 const SizedBox(width: 5),
                 GradientButton(
-                  text: index.toString(),
+                  text: busStations[index][4].toString(),
                   color: const <Color>[
                     Color(0xFFFF5C00),
                     Color(0xFF7E57C2),
                   ],
                   width: 50,
                   height: 40,
+                  onPressed: () {
+                    changePassengerCount(busStations[index][0]);
+                  },
                 ),
               ],
             ),
@@ -141,6 +153,9 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (busStations.isEmpty) {
+      getData();
+    }
     return Scaffold(
       body: Center(
         child: Stack(
@@ -192,6 +207,55 @@ class _AdminPageState extends State<AdminPage> {
                   Color(0xFF2EE2B3),
                 ],
                 onPressed: submit,
+              ),
+            )
+          ],
+        ),
+      );
+
+  Future<String?> changePassengerCount(int stationID) => showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text(
+            "Yolcu Sayısı Değiştir",
+            textAlign: TextAlign.center,
+          ),
+          content: Container(
+            child: TextField(
+              controller: passengerCountController,
+              autofocus: true,
+              // controller: usernameController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.supervisor_account_rounded),
+                hintText: "Yolcu Sayısı",
+              ),
+              keyboardType: TextInputType.name,
+            ),
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black38,
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GradientButton(
+                text: "Değiştir",
+                color: const <Color>[
+                  Color(0xFF062880),
+                  Color(0xFF03ACAD),
+                  Color(0xFF2EE2B3),
+                ],
+                onPressed: () {
+                  stationsRef.doc(stationID.toString()).update(
+                      {"passengerCount": passengerCountController.text});
+                  Navigator.of(context).pop();
+                },
               ),
             )
           ],
