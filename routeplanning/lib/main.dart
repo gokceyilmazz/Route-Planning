@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         inputDecorationTheme: InputTheme().theme(),
       ),
-      initialRoute: "/map",
+      initialRoute: "/adminpage",
       routes: {
         "/login": (context) => const LoginPage(),
         "/userpage": (context) => const UserPage(),
